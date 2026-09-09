@@ -17,7 +17,7 @@ for (let entry of expenseEntries) {
 }
 
 function calculateAverageExpense() {
-  if (expenseEntries != "") {return totalExpensesValue / expenseEntries.length;} 
+  if ( expenseEntries.length != 0) {return totalExpensesValue / expenseEntries.length;} 
   else {return 0;}
 }
 
@@ -27,8 +27,9 @@ function calculateBalance() {
 }
 
 function updateBalanceColor() {
-  if (balance <= 0) {balanceColor = "red"}
-  else if (balance <= budgetValue * 0.25) {balanceColor = "orange"}
+  if (balance <= 0) {balanceColor = "red";}
+  else if (balance <= budgetValue * 0.25) {balanceColor = "orange";}
+  else {balanceColor = "green";}
 }
 
 function calculateCategoryExpenses(category) {
@@ -41,22 +42,24 @@ function calculateCategoryExpenses(category) {
 }
 
 function calculateLargestCategory() {
-  let categoriesTotals = [
-    ["groceries", 0],
-    ["restaurants", 0],
-    ["transport", 0], 
-    ["home", 0],
-    ["subscriptions", 0] 
-  ];
-  let largestCategory = categoriesTotals[0];
-
-  for (let category of categoriesTotals){
-    category[1] = calculateCategoryExpenses(category[0]);
-    if (category[1] > largestCategory[1]) {largestCategory = category}
+  let totals = {};
+  let largestCategory = null;
+  let maxAmount = -1;
+  
+  for (let entry of expenseEntries) {
+    let category = entry[0];
+    let amount = entry[1];
+    totals[category] = (totals[category] || 0) + amount;
   }
-
-  console.log(largestCategory);
-  return largestCategory[0];
+  
+  for (let category in totals) {
+    if (totals[category] > maxAmount) {
+      maxAmount = totals[category];
+      largestCategory = category;
+    }
+  }
+  
+  return largestCategory;
 }
 
 function addExpenseEntry(expenseEntry){
